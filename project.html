@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details | Electronics Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <header>
+        <h1><a href="index.html" style="color:inherit; text-decoration:none;">Anti-Gravity Electronics</a></h1>
+        <nav>
+            <a href="index.html">&larr; Back to Projects</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="loader-container" id="loader-container">
+            <span class="loader"></span>
+        </div>
+
+        <section id="project-details" style="display: none; padding: 4rem 0;">
+            <div class="project-header" style="text-align: center; margin-bottom: 3rem;">
+                <h2 id="project-title" style="font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(90deg, #fff, var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Project Title</h2>
+                <span id="project-date" style="color: var(--accent-color); font-weight: 600;">Date</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 3rem;">
+                <!-- Left Column: Description & Media -->
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: #fff; font-size: 1.5rem;">Description</h3>
+                    <div id="project-description" style="color: var(--text-secondary); line-height: 1.8; font-size: 1.1rem; white-space: pre-wrap; margin-bottom: 3rem;"></div>
+                    
+                    <h3 style="margin-bottom: 1rem; color: #fff; font-size: 1.5rem;">Media Gallery</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">Click any image or video to view in full screen.</p>
+                    <div id="project-media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                        <!-- Media injected here -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Components -->
+                <div>
+                    <div style="background: rgba(25, 25, 25, 0.6); border: 1px solid var(--glass-border); border-radius: 16px; padding: 2rem; position: sticky; top: 120px;">
+                        <h3 style="margin-bottom: 1.5rem; color: #fff; font-size: 1.3rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;">Components Used</h3>
+                        <ul id="project-components" style="color: var(--text-secondary); line-height: 1.8; list-style-position: inside; padding-left: 0;">
+                            <!-- Components injected here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox" style="display: none;">
+        <button id="lightbox-close" class="lightbox-close">&times;</button>
+        <div class="lightbox-content" id="lightbox-content">
+            <!-- Media injected here -->
+        </div>
+    </div>
+
+    <footer>
+        <p>Developed and Maintained by <span>Nithin</span> &copy; 2026</p>
+    </footer>
+
+    <script src="js/supabase-config.js"></script>
+    <script src="js/project.js"></script>
+</body>
+</html>

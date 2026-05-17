@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Electronics Portfolio</title>
+    <!-- Use absolute path or proper relative path to main css -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="js/auth-check.js"></script>
+
+    <style>
+        .management-list {
+            margin-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 2rem;
+        }
+        .project-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .project-item h4 {
+            margin-bottom: 0.2rem;
+            color: #fff;
+        }
+        .project-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .btn-small {
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+        .btn-edit { background: var(--accent-color); color: #000; }
+        .btn-delete { background: #ff3366; color: #fff; }
+
+        /* Media Staging Styles */
+        .staged-media-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .staged-media-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+        }
+        .staged-media-name {
+            font-size: 0.9rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80%;
+        }
+        .staged-media-remove {
+            background: none;
+            border: none;
+            color: #ff3366;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 0 0.5rem;
+        }
+        .staged-media-remove:hover {
+            color: #ff0040;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <header>
+        <h1><a href="../index.html" style="color:inherit; text-decoration:none;">Anti-Gravity Admin</a></h1>
+        <nav>
+            <a href="../index.html">View Site</a>
+            <a href="#" id="logout-btn" style="color: #ff3366;">Log Out</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="admin-container">
+            <div class="admin-header">
+                <h2 id="form-title">Add New Project</h2>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem;">Upload photos or videos and add project details.</p>
+            </div>
+
+            <form id="add-project-form">
+                <!-- Hidden field for edit mode -->
+                <input type="hidden" id="edit-id">
+                <input type="hidden" id="edit-media-json">
+
+                <div class="form-group">
+                    <label for="title">Project Title</label>
+                    <input type="text" id="title" class="form-control" required placeholder="e.g., IoT Smart Home Hub">
+                </div>
+
+                <div class="form-group">
+                    <label for="project-date">Project Date (Optional)</label>
+                    <input type="date" id="project-date" class="form-control" title="Leave blank to use today's date.">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" class="form-control" required placeholder="Describe the project..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="components">Components Used</label>
+                    <textarea id="components" class="form-control" placeholder="e.g. ESP32, 10k Resistor, 5V Relay (comma separated or bullet points)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Media (Photos / Videos)</label>
+                    
+                    <div id="media-staging-list" class="staged-media-list">
+                        <!-- Staged media items will appear here -->
+                    </div>
+
+                    <button type="button" id="add-media-btn" class="btn btn-small" style="width: auto; background: rgba(255,255,255,0.1); color: #fff; border: 1px dashed var(--glass-border);">+ Add File</button>
+                    <!-- Hidden file input triggered by add-media-btn -->
+                    <input type="file" id="media-file-hidden" accept="image/*,video/*" style="display:none;" multiple>
+                    
+                    <small style="color:var(--text-secondary); display:block; margin-top:0.5rem;">Manage individual files for this project. You can add or remove files one by one.</small>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" id="submit-btn" class="btn">Upload Project</button>
+                    <button type="button" id="cancel-edit-btn" class="btn" style="background:#555; display:none;">Cancel Edit</button>
+                </div>
+                
+                <div class="loader-container" id="admin-loader">
+                    <span class="loader"></span>
+                </div>
+            </form>
+
+            <div class="management-list">
+                <h3>Manage Projects</h3>
+                <div id="project-list" style="margin-top: 1rem;">
+                    <!-- Projects list injected here -->
+                    <p style="color:var(--text-secondary); text-align:center;">Loading projects...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Developed and Maintained by <span>Nithin</span> &copy; 2026</p>
+    </footer>
+
+    <div id="toast" class="toast">Message here</div>
+
+    <!-- Load script -->
+    <script src="js/admin.js"></script>
+</body>
+</html>
