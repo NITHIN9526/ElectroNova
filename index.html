@@ -16,9 +16,12 @@
 
     <header>
         <h1 onclick="window.location.reload()">ElectroNova</h1>
+        <div class="header-search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Search projects...">
+            <button id="search-btn" class="search-btn">Search</button>
+        </div>
         <nav>
             <a href="#projects">Projects</a>
-            <!-- No admin button here, as requested. Accessible via /adminpanel -->
         </nav>
     </header>
 
@@ -27,11 +30,6 @@
             <h2>Building the Future,<br>One Circuit at a Time</h2>
             <p>Explore my latest electronic projects, hardware designs, and embedded software creations.</p>
         </section>
-
-        <div class="search-container">
-            <input type="text" id="search-input" class="search-input" placeholder="Search projects...">
-            <button id="search-btn" class="search-btn">Search</button>
-        </div>
 
         <div class="loader-container" id="loader-container">
             <span class="loader"></span>
