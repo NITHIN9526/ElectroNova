@@ -3,6 +3,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const gallery = document.querySelector('.gallery');
     const loaderContainer = document.getElementById('loader-container');
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+
+    let allProjects = [];
 
     // Show loader
     loaderContainer.style.display = 'flex';
@@ -10,7 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!checkConfig()) {
         // Render demo data if Supabase isn't configured yet
         loaderContainer.style.display = 'none';
-        renderDemoProjects(gallery);
+        allProjects = getDemoProjects();
+        renderProjects(allProjects, gallery);
+        setupSearch();
         return;
     }
 
@@ -27,15 +33,43 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        allProjects = projects;
+
         if (projects.length === 0) {
             gallery.innerHTML = '<p style="color:var(--text-secondary); grid-column: 1/-1; text-align:center;">No projects found. Add some from the admin panel!</p>';
         } else {
-            renderProjects(projects, gallery);
+            renderProjects(allProjects, gallery);
+            setupSearch();
         }
     } catch (err) {
         console.error('Unexpected error:', err);
     } finally {
         loaderContainer.style.display = 'none';
+    }
+
+    function setupSearch() {
+        if (!searchInput) return;
+
+        const performSearch = () => {
+            const query = searchInput.value.toLowerCase().trim();
+            const filtered = allProjects.filter(p => {
+                const titleMatch = p.title?.toLowerCase().includes(query);
+                const descMatch = p.description?.toLowerCase().includes(query);
+                const compMatch = p.components?.toLowerCase().includes(query);
+                return titleMatch || descMatch || compMatch;
+            });
+
+            if (filtered.length === 0) {
+                gallery.innerHTML = '<p style="color:var(--text-secondary); grid-column: 1/-1; text-align:center;">No matching projects found.</p>';
+            } else {
+                renderProjects(filtered, gallery);
+            }
+        };
+
+        searchInput.addEventListener('input', performSearch);
+        if (searchBtn) {
+            searchBtn.addEventListener('click', performSearch);
+        }
     }
 });
 
@@ -97,9 +131,9 @@ function escapeHTML(str) {
     return div.innerHTML;
 }
 
-// Demo data for when Supabase is not yet configured
-function renderDemoProjects(container) {
-    const demoProjects = [
+// Get demo projects
+function getDemoProjects() {
+    return [
         {
             title: "IoT Smart Home Hub",
             description: "A custom ESP32-based smart home controller with a responsive web interface.",
@@ -107,6 +141,7 @@ function renderDemoProjects(container) {
                 { url: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", type: "image/jpeg" },
                 { url: "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", type: "image/jpeg" }
             ],
+            components: "ESP32, Relay Module, DHT11 Temp Sensor",
             created_at: new Date().toISOString()
         },
         {
@@ -115,6 +150,7 @@ function renderDemoProjects(container) {
             media: [
                 { url: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", type: "image/jpeg" }
             ],
+            components: "STM32, MPU6050 Gyro, Brushless Motors",
             created_at: new Date(Date.now() - 86400000).toISOString()
         },
         {
@@ -123,8 +159,8 @@ function renderDemoProjects(container) {
             media: [
                 { url: "https://images.unsplash.com/photo-1580584126903-c17d41830450?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", type: "image/jpeg" }
             ],
+            components: "Arduino Uno, MG996R Servos, Acrylic chassis",
             created_at: new Date(Date.now() - 172800000).toISOString()
         }
     ];
-    renderProjects(demoProjects, container);
 }

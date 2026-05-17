@@ -510,3 +510,52 @@ footer span {
 .lightbox-close:hover {
   color: var(--accent-color);
 }
+
+/* Search Box Styles */
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  gap: 0.5rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.search-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+}
+
+.search-btn {
+  background: var(--accent-color);
+  color: #000;
+  border: none;
+  border-radius: 30px;
+  padding: 0 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.search-btn:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}

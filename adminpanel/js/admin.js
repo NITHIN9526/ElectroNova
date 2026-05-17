@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // List container
     const projectListContainer = document.getElementById('project-list');
+    
+    // Search elements
+    const adminSearchInput = document.getElementById('admin-search-input');
+    const adminSearchBtn = document.getElementById('admin-search-btn');
+    let allAdminProjects = [];
 
     // Logout
     document.getElementById('logout-btn').addEventListener('click', async (e) => {
@@ -85,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial render
     renderStagedMedia();
 
-    // Fetch and render projects
+    // Fetch projects
     const loadProjects = async () => {
         const { data: projects, error } = await supabaseClient
             .from('projects')
@@ -93,12 +98,18 @@ document.addEventListener('DOMContentLoaded', () => {
             .order('created_at', { ascending: false });
 
         if (error) {
-            projectListContainer.innerHTML = '<p style="color:var(--text-secondary);">Error loading projects.</p>';
+            projectListContainer.innerHTML = '<p style="color:var(--text-secondary); grid-column: 1/-1;">Error loading projects.</p>';
             return;
         }
 
+        allAdminProjects = projects;
+        renderAdminProjects(allAdminProjects);
+    };
+
+    // Render projects list in grid
+    const renderAdminProjects = (projects) => {
         if (projects.length === 0) {
-            projectListContainer.innerHTML = '<p style="color:var(--text-secondary);">No projects found.</p>';
+            projectListContainer.innerHTML = '<p style="color:var(--text-secondary); grid-column: 1/-1; text-align:center; padding: 2rem 0;">No projects found.</p>';
             return;
         }
 
@@ -153,6 +164,27 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', handleEditClick);
         });
+    };
+
+    // Setup Search Logic
+    const setupSearch = () => {
+        if (!adminSearchInput) return;
+
+        const performAdminSearch = () => {
+            const query = adminSearchInput.value.toLowerCase().trim();
+            const filtered = allAdminProjects.filter(p => {
+                const titleMatch = p.title?.toLowerCase().includes(query);
+                const descMatch = p.description?.toLowerCase().includes(query);
+                const compMatch = p.components?.toLowerCase().includes(query);
+                return titleMatch || descMatch || compMatch;
+            });
+            renderAdminProjects(filtered);
+        };
+
+        adminSearchInput.addEventListener('input', performAdminSearch);
+        if (adminSearchBtn) {
+            adminSearchBtn.addEventListener('click', performAdminSearch);
+        }
     };
 
     const handleDelete = async (e) => {
@@ -336,7 +368,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial load
-    loadProjects();
+    loadProjects().then(() => {
+        setupSearch();
+    });
 });
 
 // Utility

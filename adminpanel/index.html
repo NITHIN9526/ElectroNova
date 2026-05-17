@@ -155,7 +155,13 @@
             </form>
 
             <div class="management-list" style="border-top: 1px solid var(--glass-border); padding-top: 2rem; margin-top: 3rem;">
-                <h3 style="font-size: 1.8rem; background: linear-gradient(90deg, #fff, var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem;">Manage Projects</h3>
+                <h3 style="font-size: 1.8rem; background: linear-gradient(90deg, #fff, var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem;">Manage Projects</h3>
+                
+                <div class="search-container">
+                    <input type="text" id="admin-search-input" class="search-input" placeholder="Search projects...">
+                    <button id="admin-search-btn" class="search-btn">Search</button>
+                </div>
+
                 <div id="project-list" class="gallery">
                     <!-- Projects list injected here -->
                     <p style="color:var(--text-secondary); text-align:center; grid-column: 1/-1;">Loading projects...</p>
