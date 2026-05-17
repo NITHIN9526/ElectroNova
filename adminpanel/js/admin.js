@@ -104,19 +104,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
         projectListContainer.innerHTML = '';
         projects.forEach(project => {
-            const div = document.createElement('div');
-            div.className = 'project-item';
-            div.innerHTML = `
-                <div>
-                    <h4>${escapeHTML(project.title)}</h4>
-                    <p>${new Date(project.created_at).toLocaleDateString()}</p>
-                </div>
-                <div>
-                    <button class="btn-small btn-edit" data-id="${project.id}">Edit</button>
-                    <button class="btn-small btn-delete" data-id="${project.id}">Delete</button>
+            const card = document.createElement('article');
+            card.className = 'project-card';
+
+            // Extract media array or fallback to old schema
+            let mediaArray = [];
+            if (project.media && Array.isArray(project.media) && project.media.length > 0) {
+                mediaArray = project.media;
+            } else if (project.media_url) {
+                mediaArray = [{ url: project.media_url, type: project.media_type }];
+            } else {
+                mediaArray = [{ url: 'https://via.placeholder.com/400x300?text=No+Media', type: 'image/jpeg' }];
+            }
+
+            // Build HTML for the scrolling gallery
+            let mediaGalleryHTML = '<div class="media-gallery">';
+            mediaArray.forEach(m => {
+                if (m.type && m.type.startsWith('video')) {
+                    mediaGalleryHTML += `<video class="project-media" src="${m.url}" controls muted></video>`;
+                } else {
+                    mediaGalleryHTML += `<img class="project-media" src="${m.url}" alt="${escapeHTML(project.title)}" loading="lazy">`;
+                }
+            });
+            mediaGalleryHTML += '</div>';
+
+            const dateObj = new Date(project.created_at || Date.now());
+            const formattedDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+            card.innerHTML = `
+                ${mediaGalleryHTML}
+                <div class="project-info">
+                    <h3 class="project-title">${escapeHTML(project.title)}</h3>
+                    <p class="project-desc">${escapeHTML(project.description).substring(0, 100)}...</p>
+                    <span class="project-date">${formattedDate}</span>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="btn-small btn-edit" data-id="${project.id}" style="margin:0; flex:1;">Edit</button>
+                        <button class="btn-small btn-delete" data-id="${project.id}" style="margin:0; flex:1; background:#ff3366; color:#fff;">Delete</button>
+                    </div>
                 </div>
             `;
-            projectListContainer.appendChild(div);
+            projectListContainer.appendChild(card);
         });
 
         // Add event listeners for edit and delete
