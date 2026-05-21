@@ -28,8 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logout
     document.getElementById('logout-btn').addEventListener('click', async (e) => {
         e.preventDefault();
-        await supabaseClient.auth.signOut();
-        window.location.href = 'login.html';
+        try {
+            await supabaseClient.auth.signOut();
+        } catch (err) {
+            console.error('Logout error:', err);
+        } finally {
+            window.location.href = 'login.html';
+        }
     });
 
     // Handle Add Media Button
