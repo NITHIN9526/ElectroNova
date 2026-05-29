@@ -164,3 +164,52 @@ function getDemoProjects() {
         }
     ];
 }
+
+// Contact Form Console Simulation
+document.addEventListener('DOMContentLoaded', () => {
+    const contactForm = document.getElementById('contact-form');
+    const consoleResponse = document.getElementById('console-response');
+    const submitBtn = document.getElementById('comms-submit-btn');
+
+    if (contactForm && consoleResponse) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+
+            // Prevent double submission
+            submitBtn.disabled = true;
+            
+            // Set sending progress state
+            consoleResponse.className = 'console-status progress';
+            consoleResponse.innerHTML = `
+                <span class="status-marker purple">●</span>
+                <span class="status-text">TRANSMIT_PROGRESS: Encrypting payload & opening socket...</span>
+            `;
+
+            // Animate transmission packet progress
+            setTimeout(() => {
+                consoleResponse.innerHTML = `
+                    <span class="status-marker purple">●</span>
+                    <span class="status-text">TRANSMIT_PROGRESS: Sending packet (Ident: ${escapeHTML(name)}) to target...</span>
+                `;
+            }, 1000);
+
+            setTimeout(() => {
+                // Success state
+                consoleResponse.className = 'console-status success';
+                consoleResponse.innerHTML = `
+                    <span class="status-marker green">●</span>
+                    <span class="status-text">TRANSMISSION SUCCESSFUL: Data routed. Thank you, ${escapeHTML(name)}!</span>
+                `;
+                
+                // Clear inputs
+                contactForm.reset();
+                submitBtn.disabled = false;
+            }, 2500);
+        });
+    }
+});
+

@@ -23,6 +23,7 @@
         </div>
         <nav>
             <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
         </nav>
     </header>
 
@@ -36,8 +37,75 @@
             <span class="loader"></span>
         </div>
 
-        <section id="projects" class="gallery" id="project-gallery">
+        <section id="projects" class="gallery">
             <!-- Projects will be dynamically injected here by app.js -->
+        </section>
+
+        <!-- Cyberpunk Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="contact-header">
+                <h2>Establish Connection</h2>
+                <p>Initialize transmission protocols to send a message or find my nodes across the net.</p>
+            </div>
+            
+            <div class="contact-grid">
+                <!-- Left Column: High-Tech Node Cards -->
+                <div class="contact-nodes">
+                    <h3 class="cyber-heading">Active Nodes</h3>
+                    
+                    <div class="node-card">
+                        <div class="node-icon">📧</div>
+                        <div class="node-details">
+                            <span class="node-label">COMMS / EMAIL</span>
+                            <a href="mailto:nithin9526@gmail.com" class="node-value">nithin9526@gmail.com</a>
+                        </div>
+                    </div>
+                    
+                    <div class="node-card">
+                        <div class="node-icon">🐙</div>
+                        <div class="node-details">
+                            <span class="node-label">GATEWAY / GITHUB</span>
+                            <a href="https://github.com/NITHIN9526" target="_blank" class="node-value">github.com/NITHIN9526</a>
+                        </div>
+                    </div>
+                    
+                    <div class="node-card">
+                        <div class="node-icon">💼</div>
+                        <div class="node-details">
+                            <span class="node-label">MATRIX / LINKEDIN</span>
+                            <a href="https://linkedin.com" target="_blank" class="node-value">linkedin.com/in/nithin</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Interactive Terminal Console Form -->
+                <div class="contact-console">
+                    <h3 class="cyber-heading">Transmission Console</h3>
+                    
+                    <form id="contact-form" class="console-form">
+                        <div class="form-group">
+                            <label for="contact-name">IDENT_NAME &gt;</label>
+                            <input type="text" id="contact-name" class="form-control console-input" required placeholder="e.g. guest_user">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-email">ROUTE_ADDR &gt;</label>
+                            <input type="email" id="contact-email" class="form-control console-input" required placeholder="e.g. user@net.net">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-message">DATA_PAYLOAD &gt;</label>
+                            <textarea id="contact-message" class="form-control console-input console-textarea" required placeholder="Enter transmission load..."></textarea>
+                        </div>
+                        
+                        <button type="submit" id="comms-submit-btn" class="btn console-btn">INITIALIZE TRANSMISSION</button>
+                        
+                        <div id="console-response" class="console-status">
+                            <span class="status-marker green">●</span> <span class="status-text">SYSTEM: Comms online. Awaiting data...</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </section>
     </main>
 
