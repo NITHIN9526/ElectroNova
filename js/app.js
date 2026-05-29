@@ -189,15 +189,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="status-text">TRANSMIT_PROGRESS: Establishing secure handshake...</span>
             `;
 
-            // CONFIGURATION: Enter your Telegram credentials here
-            const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN';
-            const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID';
-
-            // Check if user has configured credentials, otherwise run simulation fallback
-            if (TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' || TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID') {
-                runSimulationFallback(name, email, message);
-                return;
-            }
+            // Secure proxy endpoint (server keeps the bot token in env vars)
+            const proxyUrl = '/api/sendMessage';
 
             try {
                 // Update console status to sending packet
@@ -209,21 +202,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 800);
 
                 // Format Markdown message text for Telegram bot
+                const timestamp = new Date().toISOString();
                 const textMessage = `🔌 *New Comms Telemetry Received!*\n\n` +
+                                    `⏱️ *Timestamp:* \`${timestamp}\`\n\n` +
                                     `👤 *Sender Name:* \`${name}\`\n` +
                                     `✉️ *Routing Addr:* \`${email}\`\n\n` +
                                     `📝 *Payload Message:*\n"${message}"`;
 
-                const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-                
-                const response = await fetch(telegramUrl, {
+                // Send to server-side proxy which holds the token
+                const response = await fetch(proxyUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: textMessage,
-                        parse_mode: 'Markdown'
-                    })
+                    body: JSON.stringify({ name, email, message, timestamp })
                 });
 
                 const result = await response.json();
@@ -233,13 +223,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         consoleResponse.className = 'console-status success';
                         consoleResponse.innerHTML = `
                             <span class="status-marker green">●</span>
-                            <span class="status-text">TRANSMISSION SUCCESSFUL: Package routed to Nithin's pager. Thank you, ${escapeHTML(name)}!</span>
+                            <span class="status-text">TRANSMISSION SUCCESSFUL: Package routed to Nithin's pager. Thank you, ${escapeHTML(name)}! Sent at ${new Date(timestamp).toLocaleString()}</span>
                         `;
                         contactForm.reset();
                         submitBtn.disabled = false;
                     }, 1800);
                 } else {
-                    throw new Error(result.description || 'API Error');
+                    // If server returned an error, throw to trigger fallback
+                    throw new Error(result.error || result.description || 'API Error');
                 }
             } catch (err) {
                 console.error('Telegram Transmission Failed:', err);
