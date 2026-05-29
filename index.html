@@ -12,6 +12,91 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <!-- Cyberpunk System Boot Loader Splash -->
+    <div id="boot-loader" class="boot-loader-container">
+        <div class="boot-loader-content">
+            <div class="cyber-spinner"></div>
+            <div class="boot-terminal">
+                <div class="boot-title">ELECTRONOVA CORE v2.6.0</div>
+                <div class="boot-line">INITIALIZING SYSTEM HARDWARE...</div>
+                <div class="boot-line" id="boot-progress-text">DECRYPTING MODULES: [..........] 0%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Immediate Boot Loader Simulation Script
+        (function() {
+            document.addEventListener('DOMContentLoaded', () => {
+                const bootProgress = document.getElementById('boot-progress-text');
+                const bootContainer = document.getElementById('boot-loader');
+                if (!bootProgress || !bootContainer) return;
+
+                const bootLines = [
+                    'ESTABLISHING CONNECTION NODES...',
+                    'SECURING DOCK PROTOCOLS [OK]',
+                    'LOADING INTERFACE GRAPHICS...',
+                    'DECRYPTING FIRMWARE SHIELDS [OK]',
+                    'ELECTRONOVA ONLINE.'
+                ];
+                
+                let percent = 0;
+                let lineIdx = 0;
+                
+                const timer = setInterval(() => {
+                    // Random increment to simulate loading jitter
+                    percent += Math.floor(Math.random() * 15) + 6;
+                    if (percent >= 100) {
+                        percent = 100;
+                        clearInterval(timer);
+                        
+                        setTimeout(() => {
+                            bootContainer.classList.add('fade-out');
+                            setTimeout(() => {
+                                bootContainer.style.display = 'none';
+                            }, 600);
+                        }, 300);
+                    }
+                    
+                    // Add boot console message lines at specific milestones
+                    if (percent > 20 && lineIdx === 0) {
+                        addBootConsoleLine(bootLines[0]);
+                        lineIdx++;
+                    } else if (percent > 45 && lineIdx === 1) {
+                        addBootConsoleLine(bootLines[1]);
+                        lineIdx++;
+                    } else if (percent > 65 && lineIdx === 2) {
+                        addBootConsoleLine(bootLines[2]);
+                        lineIdx++;
+                    } else if (percent > 85 && lineIdx === 3) {
+                        addBootConsoleLine(bootLines[3]);
+                        lineIdx++;
+                    } else if (percent === 100 && lineIdx === 4) {
+                        addBootConsoleLine(bootLines[4]);
+                        lineIdx++;
+                    }
+                    
+                    // Calculate visual progress bar state
+                    const totalBars = 10;
+                    const filledBars = Math.floor(percent / (100 / totalBars));
+                    const barString = '='.repeat(filledBars) + '.'.repeat(totalBars - filledBars);
+                    bootProgress.textContent = `DECRYPTING MODULES: [${barString}] ${percent}%`;
+                }, 90);
+                
+                function addBootConsoleLine(text) {
+                    const terminal = document.querySelector('.boot-terminal');
+                    if (!terminal) return;
+                    const newLine = document.createElement('div');
+                    newLine.className = 'boot-line';
+                    newLine.style.color = '#ff007f';
+                    newLine.style.textShadow = '0 0 5px rgba(255, 0, 127, 0.3)';
+                    newLine.textContent = `> ${text}`;
+                    terminal.insertBefore(newLine, bootProgress);
+                }
+            });
+        })();
+    </script>
+
     <div class="bg-glow"></div>
     <div class="bg-glow-2"></div>
 
