@@ -165,51 +165,118 @@ function getDemoProjects() {
     ];
 }
 
-// Contact Form Console Simulation
+// Contact Form - Telegram Bot / Terminal Console Integration
 document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById('contact-form');
     const consoleResponse = document.getElementById('console-response');
     const submitBtn = document.getElementById('comms-submit-btn');
 
     if (contactForm && consoleResponse) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const name = document.getElementById('contact-name').value;
-            const email = document.getElementById('contact-email').value;
-            const message = document.getElementById('contact-message').value;
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
 
             // Prevent double submission
             submitBtn.disabled = true;
             
-            // Set sending progress state
+            // Set initial connection progress state
             consoleResponse.className = 'console-status progress';
             consoleResponse.innerHTML = `
                 <span class="status-marker purple">●</span>
-                <span class="status-text">TRANSMIT_PROGRESS: Encrypting payload & opening socket...</span>
+                <span class="status-text">TRANSMIT_PROGRESS: Establishing secure handshake...</span>
             `;
 
-            // Animate transmission packet progress
-            setTimeout(() => {
-                consoleResponse.innerHTML = `
-                    <span class="status-marker purple">●</span>
-                    <span class="status-text">TRANSMIT_PROGRESS: Sending packet (Ident: ${escapeHTML(name)}) to target...</span>
-                `;
-            }, 1000);
+            // CONFIGURATION: Enter your Telegram credentials here
+            const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN';
+            const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID';
 
-            setTimeout(() => {
-                // Success state
-                consoleResponse.className = 'console-status success';
-                consoleResponse.innerHTML = `
-                    <span class="status-marker green">●</span>
-                    <span class="status-text">TRANSMISSION SUCCESSFUL: Data routed. Thank you, ${escapeHTML(name)}!</span>
-                `;
+            // Check if user has configured credentials, otherwise run simulation fallback
+            if (TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN' || TELEGRAM_CHAT_ID === 'YOUR_CHAT_ID') {
+                runSimulationFallback(name, email, message);
+                return;
+            }
+
+            try {
+                // Update console status to sending packet
+                setTimeout(() => {
+                    consoleResponse.innerHTML = `
+                        <span class="status-marker purple">●</span>
+                        <span class="status-text">TRANSMIT_PROGRESS: Packaging & routing telemetry payloads...</span>
+                    `;
+                }, 800);
+
+                // Format Markdown message text for Telegram bot
+                const textMessage = `🔌 *New Comms Telemetry Received!*\n\n` +
+                                    `👤 *Sender Name:* \`${name}\`\n` +
+                                    `✉️ *Routing Addr:* \`${email}\`\n\n` +
+                                    `📝 *Payload Message:*\n"${message}"`;
+
+                const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
                 
-                // Clear inputs
-                contactForm.reset();
-                submitBtn.disabled = false;
-            }, 2500);
+                const response = await fetch(telegramUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: textMessage,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.ok) {
+                    setTimeout(() => {
+                        consoleResponse.className = 'console-status success';
+                        consoleResponse.innerHTML = `
+                            <span class="status-marker green">●</span>
+                            <span class="status-text">TRANSMISSION SUCCESSFUL: Package routed to Nithin's pager. Thank you, ${escapeHTML(name)}!</span>
+                        `;
+                        contactForm.reset();
+                        submitBtn.disabled = false;
+                    }, 1800);
+                } else {
+                    throw new Error(result.description || 'API Error');
+                }
+            } catch (err) {
+                console.error('Telegram Transmission Failed:', err);
+                setTimeout(() => {
+                    consoleResponse.className = 'console-status error';
+                    consoleResponse.innerHTML = `
+                        <span class="status-marker purple">●</span>
+                        <span class="status-text">TRANSMISSION FAILED: Network error. Falling back to local terminal...</span>
+                    `;
+                    // Run visual fallback on failure so user is not blocked
+                    setTimeout(() => {
+                        runSimulationFallback(name, email, message);
+                    }, 1500);
+                }, 800);
+            }
         });
     }
+
+    // Elegant simulated terminal bootloader fallback for local/demo runs
+    function runSimulationFallback(name, email, message) {
+        setTimeout(() => {
+            consoleResponse.innerHTML = `
+                <span class="status-marker purple">●</span>
+                <span class="status-text">TRANSMIT_PROGRESS: Direct link offline. Simulating local packet route...</span>
+            `;
+        }, 1000);
+
+        setTimeout(() => {
+            consoleResponse.className = 'console-status success';
+            consoleResponse.innerHTML = `
+                <span class="status-marker green">●</span>
+                <span class="status-text">TRANSMISSION SIMULATED: Data packet logged locally. Thank you, ${escapeHTML(name)}!</span>
+            `;
+            contactForm.reset();
+            submitBtn.disabled = false;
+        }, 2800);
+    }
 });
+
 
